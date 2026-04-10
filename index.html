@@ -52,10 +52,11 @@
 
             <section class="tab-content active" id="tab-prediction">
                 <h2>Enter Patient Information</h2>
+                <p class="form-intro">Complete the sections below and click predict. All fields are required for a reliable risk estimate.</p>
                 <form id="prediction-form" class="card">
                     <div class="form-grid">
-                        <fieldset>
-                            <legend>Basic Information</legend>
+                        <section class="form-section">
+                            <h3 class="section-title">Basic Information</h3>
                             <label>Age
                                 <input type="number" name="Age" min="1" max="120" value="45" required>
                             </label>
@@ -65,8 +66,7 @@
                                     <option value="Female">Female</option>
                                 </select>
                             </label>
-
-                            <legend>Urinary Symptoms</legend>
+                            <h3 class="section-title">Urinary Symptoms</h3>
                             <label>Polyuria
                                 <select name="Polyuria">
                                     <option value="No">No</option>
@@ -79,10 +79,10 @@
                                     <option value="Yes">Yes</option>
                                 </select>
                             </label>
-                        </fieldset>
+                        </section>
 
-                        <fieldset>
-                            <legend>Physical Symptoms</legend>
+                        <section class="form-section">
+                            <h3 class="section-title">Physical Symptoms</h3>
                             <label>Sudden Weight Loss
                                 <select name="sudden weight loss">
                                     <option value="No">No</option>
@@ -113,10 +113,10 @@
                                     <option value="Yes">Yes</option>
                                 </select>
                             </label>
-                        </fieldset>
+                        </section>
 
-                        <fieldset>
-                            <legend>Other Symptoms</legend>
+                        <section class="form-section">
+                            <h3 class="section-title">Other Symptoms</h3>
                             <label>Itching
                                 <select name="Itching">
                                     <option value="No">No</option>
@@ -159,10 +159,12 @@
                                     <option value="Yes">Yes</option>
                                 </select>
                             </label>
-                        </fieldset>
+                        </section>
                     </div>
-
-                    <button id="predict-btn" class="primary-btn" type="submit">Predict Diabetes Risk</button>
+                    <div class="form-actions">
+                        <p class="action-note">This tool supports screening only and does not replace clinical diagnosis.</p>
+                        <button id="predict-btn" class="primary-btn" type="submit">Predict Diabetes Risk</button>
+                    </div>
                 </form>
 
                 <section id="result" class="result-wrap"></section>
@@ -209,7 +211,7 @@
             </section>
 
             <footer>
-                <p>© 2026 Diabetes Prediction System | Built with HTML, CSS, JavaScript, and Flask</p>
+                <p>© 2026 Diabetes Prediction System | Built with HTML, CSS, JavaScript, and FastAPI</p>
                 <p class="small">For educational purposes only. Not intended for medical diagnosis.</p>
             </footer>
         </main>

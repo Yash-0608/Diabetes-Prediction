@@ -199,6 +199,11 @@ body {
     display: block;
 }
 
+.form-intro {
+    margin: 0 0 12px;
+    color: var(--muted);
+}
+
 .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -213,19 +218,20 @@ body {
     padding: 14px;
 }
 
-fieldset {
+.form-section {
     border: 1px solid var(--border);
-    background: #fbfdff;
+    background: linear-gradient(180deg, #fbfdff 0%, #f7fbff 100%);
     border-radius: 14px;
-    padding: 12px;
+    padding: 14px;
     margin: 0;
 }
 
-legend {
+.section-title {
     font-family: "Space Grotesk", sans-serif;
     font-weight: 700;
     color: var(--primary-strong);
-    padding: 0 6px;
+    margin: 2px 0 10px;
+    font-size: 1rem;
 }
 
 label {
@@ -257,8 +263,8 @@ select:focus {
 }
 
 .primary-btn {
-    margin: 8px 14px 14px;
-    width: calc(100% - 28px);
+    margin: 0;
+    min-width: 230px;
     padding: 12px 16px;
     border: 0;
     border-radius: 12px;
@@ -279,6 +285,22 @@ select:focus {
 .primary-btn:disabled {
     opacity: 0.75;
     cursor: not-allowed;
+}
+
+.form-actions {
+    border-top: 1px solid var(--border);
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.action-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
 }
 
 .result-wrap {
@@ -474,5 +496,14 @@ footer .small {
 
     .prob-row {
         grid-template-columns: 95px 1fr 48px;
+    }
+
+    .form-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .primary-btn {
+        width: 100%;
     }
 }
