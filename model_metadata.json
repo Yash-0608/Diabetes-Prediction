@@ -1,0 +1,18 @@
+{
+    "training_date": "2026-03-07 12:46:34",
+    "dataset_shape": [
+        251,
+        17
+    ],
+    "train_size": 200,
+    "test_size": 51,
+    "logistic_accuracy": 0.803921568627451,
+    "logistic_roc_auc": 0.9196428571428571,
+    "rf_accuracy": 0.9607843137254902,
+    "rf_roc_auc": 0.9642857142857143,
+    "best_params": {
+        "max_depth": null,
+        "min_samples_split": 2,
+        "n_estimators": 200
+    }
+}

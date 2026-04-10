@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="bg-orb bg-orb-left"></div>
+    <div class="bg-orb bg-orb-right"></div>
+
+    <div class="app-shell">
+        <aside class="sidebar">
+            <img class="sidebar-icon" src="https://img.icons8.com/color/96/000000/health-graph.png" alt="Health Graph">
+            <h2>Information</h2>
+
+            <section class="panel">
+                <h3>Model Performance</h3>
+                <div class="kv-row"><span>Accuracy</span><strong id="rf-accuracy">-</strong></div>
+                <div class="kv-row"><span>ROC-AUC Score</span><strong id="rf-rocauc">-</strong></div>
+            </section>
+
+            <section class="panel">
+                <h3>Training Info</h3>
+                <div class="kv-row"><span>Training Date</span><strong id="training-date">-</strong></div>
+                <div class="kv-row"><span>Training Samples</span><strong id="train-size">-</strong></div>
+                <div class="kv-row"><span>Test Samples</span><strong id="test-size">-</strong></div>
+            </section>
+
+            <section class="panel compact">
+                <h3>About</h3>
+                <p>This system uses machine learning to predict diabetes risk based on patient symptoms and characteristics.</p>
+            </section>
+        </aside>
+
+        <main class="main-content">
+            <header class="hero">
+                <p class="eyebrow">Health Screening Assistant</p>
+                <h1>Diabetes Prediction System</h1>
+                <p class="subtitle">Fast, structured risk screening with clear probability-based output.</p>
+            </header>
+
+            <nav class="tabs" aria-label="Sections">
+                <button class="tab-btn active" data-tab="prediction" type="button">Prediction</button>
+                <button class="tab-btn" data-tab="model-info" type="button">Model Info</button>
+                <button class="tab-btn" data-tab="about" type="button">About</button>
+            </nav>
+
+            <section class="tab-content active" id="tab-prediction">
+                <h2>Enter Patient Information</h2>
+                <form id="prediction-form" class="card">
+                    <div class="form-grid">
+                        <fieldset>
+                            <legend>Basic Information</legend>
+                            <label>Age
+                                <input type="number" name="Age" min="1" max="120" value="45" required>
+                            </label>
+                            <label>Gender
+                                <select name="Gender">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </label>
+
+                            <legend>Urinary Symptoms</legend>
+                            <label>Polyuria
+                                <select name="Polyuria">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Polydipsia
+                                <select name="Polydipsia">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Physical Symptoms</legend>
+                            <label>Sudden Weight Loss
+                                <select name="sudden weight loss">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Weakness
+                                <select name="weakness">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Polyphagia
+                                <select name="Polyphagia">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Genital Thrush
+                                <select name="Genital thrush">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Visual Blurring
+                                <select name="visual blurring">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Other Symptoms</legend>
+                            <label>Itching
+                                <select name="Itching">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Irritability
+                                <select name="Irritability">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Delayed Healing
+                                <select name="delayed healing">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Partial Paresis
+                                <select name="partial paresis">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Muscle Stiffness
+                                <select name="muscle stiffness">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Alopecia
+                                <select name="Alopecia">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                            <label>Obesity
+                                <select name="Obesity">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </label>
+                        </fieldset>
+                    </div>
+
+                    <button id="predict-btn" class="primary-btn" type="submit">Predict Diabetes Risk</button>
+                </form>
+
+                <section id="result" class="result-wrap"></section>
+            </section>
+
+            <section class="tab-content" id="tab-model-info">
+                <h2>Model Performance Metrics</h2>
+                <div class="model-grid">
+                    <article class="card metric-card">
+                        <h3>Random Forest Model</h3>
+                        <div class="kv-row"><span>Accuracy</span><strong id="info-rf-accuracy">-</strong></div>
+                        <div class="kv-row"><span>ROC-AUC</span><strong id="info-rf-rocauc">-</strong></div>
+                        <h4>Best Hyperparameters</h4>
+                        <ul id="best-params"></ul>
+                    </article>
+                    <article class="card metric-card">
+                        <h3>Logistic Regression Model</h3>
+                        <div class="kv-row"><span>Accuracy</span><strong id="info-log-accuracy">-</strong></div>
+                        <div class="kv-row"><span>ROC-AUC</span><strong id="info-log-rocauc">-</strong></div>
+                    </article>
+                </div>
+                <div class="plots-grid">
+                    <img src="/plots/confusion_matrix.png" alt="Confusion Matrix" onerror="this.style.display='none'">
+                    <img src="/plots/roc_curve.png" alt="ROC Curve" onerror="this.style.display='none'">
+                    <img class="full" src="/plots/feature_importance.png" alt="Feature Importance" onerror="this.style.display='none'">
+                </div>
+            </section>
+
+            <section class="tab-content" id="tab-about">
+                <h2>About This System</h2>
+                <article class="card prose">
+                    <h3>Purpose</h3>
+                    <p>This machine learning system estimates diabetes risk based on key symptoms and patient characteristics.</p>
+                    <h3>How It Works</h3>
+                    <ol>
+                        <li>Collects patient inputs from the form.</li>
+                        <li>Applies the same preprocessing as training.</li>
+                        <li>Generates prediction with confidence scores.</li>
+                        <li>Shows a clear risk summary and probabilities.</li>
+                    </ol>
+                    <h3>Important Disclaimer</h3>
+                    <p>This tool is for educational screening only and is not a replacement for professional medical diagnosis.</p>
+                </article>
+            </section>
+
+            <footer>
+                <p>© 2026 Diabetes Prediction System | Built with HTML, CSS, JavaScript, and Flask</p>
+                <p class="small">For educational purposes only. Not intended for medical diagnosis.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
