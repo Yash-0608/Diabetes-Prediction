@@ -73,7 +73,7 @@ form.addEventListener('submit', async (e) => {
 
     predictBtn.disabled = true;
     predictBtn.textContent = 'Predicting...';
-    resultDiv.innerHTML = '<div class="card" style="padding: 12px;">Running prediction...</div>';
+    resultDiv.innerHTML = '<div class="card" style="padding: 14px; color: var(--text-secondary); font-size: 0.9rem;">Running prediction...</div>';
 
     try {
         const response = await fetch('/predict', {
