@@ -56,6 +56,18 @@ python web_backend.py
 
 Open your browser at `http://localhost:5000`
 
+## ☁️ Deploy On Vercel
+
+This project is configured for Vercel Python serverless deployment.
+
+- Flask entrypoint: `app.py`
+- Main app module: `web_backend.py`
+- Vercel config: `vercel.json`
+
+If you previously saw `No flask entrypoint found`, redeploy after these files are present.
+
+Health check endpoint: `/health`
+
 ## 📊 Dataset
 
 The system uses `diabetes_data_upload.csv` containing:

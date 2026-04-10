@@ -35,6 +35,11 @@ def get_metadata():
     })
 
 
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok'}), 200
+
+
 @app.route('/plots/<path:filename>', methods=['GET'])
 def get_plot(filename):
     if filename not in ALLOWED_PLOTS:
