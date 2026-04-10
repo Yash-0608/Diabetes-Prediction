@@ -4,7 +4,7 @@ A machine learning-based web application for predicting diabetes risk based on p
 
 ## 🎯 Features
 
-- **Interactive Web Interface**: User-friendly HTML/CSS/JavaScript frontend served by Flask
+- **Interactive Web Interface**: User-friendly HTML/CSS/JavaScript frontend served by FastAPI
 - **Machine Learning Models**: Random Forest classifier with hyperparameter tuning
 - **Real-time Predictions**: Instant diabetes risk assessment
 - **Model Performance Metrics**: Detailed accuracy and ROC-AUC scores
@@ -60,11 +60,11 @@ Open your browser at `http://localhost:5000`
 
 This project is configured for Vercel Python serverless deployment.
 
-- Flask entrypoint: `app.py`
+- FastAPI entrypoint: `app.py`
 - Main app module: `web_backend.py`
 - Vercel config: `vercel.json`
 
-If you previously saw `No flask entrypoint found`, redeploy after these files are present.
+If you previously saw an entrypoint error, redeploy after these files are present.
 
 Health check endpoint: `/health`
 
@@ -92,7 +92,7 @@ The system uses `diabetes_data_upload.csv` containing:
 ```
 Diabetes/
 │
-├── web_backend.py                            # Flask backend for the HTML UI
+├── web_backend.py                            # FastAPI backend for the HTML UI
 ├── templates/index.html                      # Main HTML page
 ├── static/style.css                          # Stylesheet
 ├── static/app.js                             # Frontend JavaScript
@@ -116,7 +116,7 @@ Diabetes/
 ## 🛠️ Technology Stack
 
 - **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Flask
+- **Backend**: FastAPI
 - **Machine Learning**: Scikit-learn
 - **Data Processing**: Pandas, NumPy
 - **Visualization**: Matplotlib, Seaborn

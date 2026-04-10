@@ -1,12 +1,17 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 import joblib
 import json
 import pandas as pd
 from pathlib import Path
 from threading import Lock
 
-app = Flask(__name__, static_folder='static', template_folder='templates')
 PROJECT_ROOT = Path(__file__).resolve().parent
+app = FastAPI(title='Diabetes Prediction API')
+app.mount('/static', StaticFiles(directory=PROJECT_ROOT / 'static'), name='static')
+templates = Jinja2Templates(directory=PROJECT_ROOT / 'templates')
 
 _artifacts_cache = None
 _artifacts_error = None
@@ -56,44 +61,47 @@ ALLOWED_PLOTS = {
     'feature_importance.png'
 }
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.get('/')
+async def index(request: Request):
+    return templates.TemplateResponse('index.html', {'request': request})
 
 
-@app.route('/metadata', methods=['GET'])
-def get_metadata():
+@app.get('/metadata')
+async def get_metadata():
     artifacts, error = load_artifacts()
     if error:
-        return jsonify({'status': 'error', 'error': f'Artifact load failed: {error}'}), 500
+        return JSONResponse({'status': 'error', 'error': f'Artifact load failed: {error}'}, status_code=500)
 
-    return jsonify({
+    return {
         'status': 'ok',
         'metadata': artifacts['metadata']
-    })
+    }
 
 
-@app.route('/health', methods=['GET'])
-def health():
+@app.get('/health')
+async def health():
     artifacts, error = load_artifacts()
     if error:
-        return jsonify({'status': 'error', 'error': f'Artifact load failed: {error}'}), 500
-    return jsonify({'status': 'ok'}), 200
+        return JSONResponse({'status': 'error', 'error': f'Artifact load failed: {error}'}, status_code=500)
+    return {'status': 'ok'}
 
 
-@app.route('/plots/<path:filename>', methods=['GET'])
-def get_plot(filename):
+@app.get('/plots/{filename:path}')
+async def get_plot(filename: str):
     if filename not in ALLOWED_PLOTS:
-        return jsonify({'status': 'error', 'error': 'Plot not found'}), 404
-    return send_from_directory(PROJECT_ROOT, filename)
+        return JSONResponse({'status': 'error', 'error': 'Plot not found'}, status_code=404)
+    plot_path = PROJECT_ROOT / filename
+    if not plot_path.exists():
+        return JSONResponse({'status': 'error', 'error': 'Plot file missing'}, status_code=404)
+    return FileResponse(plot_path)
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    data = request.get_json()
+@app.post('/predict')
+async def predict(request: Request):
+    data = await request.json()
     try:
         artifacts, error = load_artifacts()
         if error:
-            return jsonify({'status': 'error', 'error': f'Artifact load failed: {error}'}), 500
+            return JSONResponse({'status': 'error', 'error': f'Artifact load failed: {error}'}, status_code=500)
 
         model = artifacts['model']
         feature_encoders = artifacts['feature_encoders']
@@ -101,14 +109,14 @@ def predict():
         feature_names = artifacts['feature_names']
 
         if not data:
-            return jsonify({'status': 'error', 'error': 'No input data received'}), 400
+            return JSONResponse({'status': 'error', 'error': 'No input data received'}, status_code=400)
 
         if 'Age' in data:
             data['Age'] = int(data['Age'])
 
         missing_features = [feature for feature in feature_names if feature not in data]
         if missing_features:
-            return jsonify({'status': 'error', 'error': f"Missing features: {', '.join(missing_features)}"}), 400
+            return JSONResponse({'status': 'error', 'error': f"Missing features: {', '.join(missing_features)}"}, status_code=400)
 
         # Encode categorical features
         for feature, encoder in feature_encoders.items():
@@ -130,14 +138,15 @@ def predict():
 
         confidence = round(float(proba[pred]) * 100, 2)
 
-        return jsonify({
+        return {
             'status': 'ok',
             'prediction': label,
             'confidence': confidence,
             'probabilities': class_probabilities
-        })
+        }
     except Exception as e:
-        return jsonify({'status': 'error', 'error': str(e)}), 400
+        return JSONResponse({'status': 'error', 'error': str(e)}, status_code=400)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import uvicorn
+    uvicorn.run(app, host='127.0.0.1', port=5000)
