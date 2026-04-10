@@ -3,18 +3,52 @@ import joblib
 import json
 import pandas as pd
 from pathlib import Path
+from threading import Lock
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 PROJECT_ROOT = Path(__file__).resolve().parent
 
-# Load models and encoders once
-model = joblib.load(PROJECT_ROOT / 'random_forest_model.pkl')
-feature_encoders = joblib.load(PROJECT_ROOT / 'feature_encoders.pkl')
-target_encoder = joblib.load(PROJECT_ROOT / 'target_encoder.pkl')
-with open(PROJECT_ROOT / 'feature_names.json', 'r') as f:
-    feature_names = json.load(f)
-with open(PROJECT_ROOT / 'model_metadata.json', 'r') as f:
-    metadata = json.load(f)
+_artifacts_cache = None
+_artifacts_error = None
+_artifacts_lock = Lock()
+
+
+def load_artifacts():
+    """Lazy-load model artifacts to avoid crashing the function at import time."""
+    global _artifacts_cache, _artifacts_error
+
+    if _artifacts_cache is not None:
+        return _artifacts_cache, None
+
+    if _artifacts_error is not None:
+        return None, _artifacts_error
+
+    with _artifacts_lock:
+        if _artifacts_cache is not None:
+            return _artifacts_cache, None
+        if _artifacts_error is not None:
+            return None, _artifacts_error
+
+        try:
+            model = joblib.load(PROJECT_ROOT / 'random_forest_model.pkl')
+            feature_encoders = joblib.load(PROJECT_ROOT / 'feature_encoders.pkl')
+            target_encoder = joblib.load(PROJECT_ROOT / 'target_encoder.pkl')
+            with open(PROJECT_ROOT / 'feature_names.json', 'r') as f:
+                feature_names = json.load(f)
+            with open(PROJECT_ROOT / 'model_metadata.json', 'r') as f:
+                metadata = json.load(f)
+
+            _artifacts_cache = {
+                'model': model,
+                'feature_encoders': feature_encoders,
+                'target_encoder': target_encoder,
+                'feature_names': feature_names,
+                'metadata': metadata,
+            }
+            return _artifacts_cache, None
+        except Exception as exc:
+            _artifacts_error = str(exc)
+            return None, _artifacts_error
 
 ALLOWED_PLOTS = {
     'confusion_matrix.png',
@@ -29,14 +63,21 @@ def index():
 
 @app.route('/metadata', methods=['GET'])
 def get_metadata():
+    artifacts, error = load_artifacts()
+    if error:
+        return jsonify({'status': 'error', 'error': f'Artifact load failed: {error}'}), 500
+
     return jsonify({
         'status': 'ok',
-        'metadata': metadata
+        'metadata': artifacts['metadata']
     })
 
 
 @app.route('/health', methods=['GET'])
 def health():
+    artifacts, error = load_artifacts()
+    if error:
+        return jsonify({'status': 'error', 'error': f'Artifact load failed: {error}'}), 500
     return jsonify({'status': 'ok'}), 200
 
 
@@ -50,6 +91,15 @@ def get_plot(filename):
 def predict():
     data = request.get_json()
     try:
+        artifacts, error = load_artifacts()
+        if error:
+            return jsonify({'status': 'error', 'error': f'Artifact load failed: {error}'}), 500
+
+        model = artifacts['model']
+        feature_encoders = artifacts['feature_encoders']
+        target_encoder = artifacts['target_encoder']
+        feature_names = artifacts['feature_names']
+
         if not data:
             return jsonify({'status': 'error', 'error': 'No input data received'}), 400
 

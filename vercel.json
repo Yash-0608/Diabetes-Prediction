@@ -6,15 +6,18 @@
       "use": "@vercel/python"
     }
   ],
+  "functions": {
+    "app.py": {
+      "includeFiles": [
+        "templates/**",
+        "static/**",
+        "*.pkl",
+        "*.json",
+        "*.png"
+      ]
+    }
+  },
   "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/plots/(.*)",
-      "dest": "app.py"
-    },
     {
       "src": "/(.*)",
       "dest": "app.py"
